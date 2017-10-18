@@ -1,45 +1,56 @@
 // @flow
-import _ from 'lodash';
+import _ from 'lodash/fp';
+
+_.filter('x', [{x: 1}, {x: 2}]);
+_.filter('x')([{x: 1}, {x: 2}]);
+_.filter('x', {a: {x: 1}, b: {x: 2}});
+_.filter('x')({a: {x: 1}, b: {x: 2}});
+_.filter((v: {y?: number}) => v.y)({a: {x: 1}, b: {x: 2}})[0].x;
+// $ExpectError
+_.filter((v: {y: number}) => v.y)({a: {x: 1}, b: {x: 2}});
 
 /**
  * _.attempt
  */
 _.attempt(() => void 0)
 _.attempt(x => x)
-_.attempt(x => x, 'first arg')
-_.attempt((x, y, z) => {}, null, {}, [])
+_.attempt((x, y, z) => {})
 
 /**
  * _.countBy
  */
-_.countBy([6.1, 4.2, 6.3], Math.floor);
-_.countBy(['one', 'two', 'three'], 'length');
+_.countBy(Math.floor, [6.1, 4.2, 6.3]);
+_.countBy('length', ['one', 'two', 'three']);
+_.countBy('length')(['one', 'two', 'three']);
+_.countBy('length')({one: 'one', two: 'two', three: 'three'});
 
 
 /**
  * _.differenceBy
  */
-_.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
-_.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
+_.differenceBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+_.differenceBy('x', [{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }]);
+_.differenceBy('x')([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }]);
 
 
 /**
  * _.find
  */
-_.find([1, 2, 3], x => x * 1 == 3);
-_.find([1, 2, 3], x => x == 2, 1);
+_.find(x => x * 1 == 3, [1, 2, 3]);
+_.findFrom(x => x == 2, 1, [1, 2, 3]);
 // $ExpectError number cannot be compared to string
-_.find([1, 2, 3], x => x == 'a');
+_.find(x => x == 'a', [1, 2, 3]);
 // $ExpectError number. This type is incompatible with function type.
-_.find([1, 2, 3], 1);
+_.find(1, [1, 2, 3]);
 // $ExpectError property `y`. Property not found in object literal
-_.find([{x:1}, {x:2}, {x:3}], v => v.y == 3);
-_.find([{x:1}, {x:2}, {x:3}], v => v.x == 3);
-_.find({x: 1, y: 2}, (a: number, b: string) => a);
-_.find({x: 1, y: 2}, { x: 3 });
+_.find(v => v.y == 3, [{x:1}, {x:2}, {x:3}]);
+_.find(v => v.x == 3, [{x:1}, {x:2}, {x:3}]);
+_.find((a: number, b: string) => a, {x: 1, y: 2});
+_.find({ x: 3 }, {x: 1, y: 2});
+_.find({ x: 3 })({x: 1, y: 2});
 
 // $ExpectError undefined. This type is incompatible with object type.
-var result: Object = _.find(users, 'active');
+var result: Object = _.find('active', users);
 
 /**
  * _.find examples from the official doc
@@ -50,36 +61,36 @@ var users = [
   { 'user': 'pebbles', 'age': 1,  'active': true }
 ];
 
-_.find(users, function(o) { return o.age < 40; });
+_.find(function(o) { return o.age < 40; }, users);
 
 // The `_.matches` iteratee shorthand.
-_.find(users, { 'age': 1, 'active': true });
+_.find({ 'age': 1, 'active': true }, users);
 
 // The `_.matchesProperty` iteratee shorthand.
-_.find(users, ['active', false]);
+_.find(['active', false], users);
 
 // The `_.property` iteratee shorthand.
-_.find(users, 'active');
+_.find('active', users);
 
 
 /**
  * _.groupBy
  */
-var numbersGroupedByMathFloor = _.groupBy([6.1, 4.2, 6.3], Math.floor);
+var numbersGroupedByMathFloor = _.groupBy(Math.floor, [6.1, 4.2, 6.3]);
 if (numbersGroupedByMathFloor[6]) {
   numbersGroupedByMathFloor[6][0] / numbersGroupedByMathFloor[6][1]
 }
-var stringsGroupedByLength = _.groupBy(['one', 'two', 'three'], 'length');
+var stringsGroupedByLength = _.groupBy('length', ['one', 'two', 'three']);
 if (stringsGroupedByLength[3]) {
   stringsGroupedByLength[3][0].toLowerCase();
 }
 var numbersObj: {[key: string]: number} = {a: 6.1, b: 4.2, c: 6.3};
-var numbersGroupedByMathFloor2 = _.groupBy(numbersObj, Math.floor);
+var numbersGroupedByMathFloor2 = _.groupBy(Math.floor, numbersObj);
 if (numbersGroupedByMathFloor2[6]) {
   numbersGroupedByMathFloor2[6][0] / numbersGroupedByMathFloor2[6][1]
 }
 var stringObj: {[key: string]: string} = {a: 'one', b: 'two', c: 'three'};
-var stringsGroupedByLength2 = _.groupBy(stringObj, 'length');
+var stringsGroupedByLength2 = _.groupBy('length', stringObj);
 if (stringsGroupedByLength2[3]) {
   stringsGroupedByLength2[3][0].toLowerCase();
 }
@@ -88,8 +99,8 @@ if (stringsGroupedByLength2[3]) {
 /**
  * _.intersectionBy
  */
-_.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
-_.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+_.intersectionBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+_.intersectionBy('x', [{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }]);
 
 
 /**
@@ -98,34 +109,39 @@ _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
 
 // Object — examples from lodash docs
 var exampleObjectForGetTest = { 'a': [{ 'b': { 'c': 3 } }] };
-_.get(exampleObjectForGetTest, 'a[0].b.c');
-_.get(exampleObjectForGetTest, ['a', '0', 'b', 'c']);
-_.get(exampleObjectForGetTest, 'a.b.c', 'default');
+_.get('a[0].b.c', exampleObjectForGetTest);
+_.get(['a', '0', 'b', 'c'], exampleObjectForGetTest);
+_.getOr('default', 'a.b.c', exampleObjectForGetTest);
 
 // Array — not documented, but _.get does support arrays
-_.get([1, 2, 3], '0');
-_.get(['foo', 'bar', 'baz'], '[1]');
-_.get([{ a: 'foo' }, { b: 'bar' }, { c: 'baz' }], '2');
-_.get([[1, 2], [3, 4], [5, 6], [7, 8]], '3');
+_.get('0', [1, 2, 3]);
+_.get('[1]', ['foo', 'bar', 'baz']);
+_.get('2', [{ a: 'foo' }, { b: 'bar' }, { c: 'baz' }]);
+_.get('3', [[1, 2], [3, 4], [5, 6], [7, 8]]);
+_.get('3')([[1, 2], [3, 4], [5, 6], [7, 8]]);
 
-// Second argument must be string when looking for array items by index
+// First argument must be string when looking for array items by index
 // $ExpectError number This type is incompatible with union: ?array type | string
-_.get([1, 2, 3], 0);
+_.get(0, [1, 2, 3]);
 
 
 /**
  * _.keyBy
  */
-_.keyBy([
-  { 'dir': 'left', 'code': 97 },
-  { 'dir': 'right', 'code': 100 }
-], function(o) {
+_.keyBy(function(o) {
   return String.fromCharCode(o.code);
-});
-_.keyBy([
+}, [
   { 'dir': 'left', 'code': 97 },
   { 'dir': 'right', 'code': 100 }
-], 'dir');
+]);
+_.keyBy('dir', [
+  { 'dir': 'left', 'code': 97 },
+  { 'dir': 'right', 'code': 100 }
+]);
+_.keyBy('dir')([
+  { 'dir': 'left', 'code': 97 },
+  { 'dir': 'right', 'code': 100 }
+]);
 
 // Example of keying a map of objects by a number type
 type KeyByTest$ByNumber<T: Object> = { [number]: T }
@@ -138,7 +154,8 @@ var keyByTest_map: KeyByTest$ByNumber<KeyByTest$Record> = {
   [keyByTest_array[2].id]: keyByTest_array[2],
 }
 
-var keyByTest_map2: KeyByTest$ByNumberMaybe<?KeyByTest$Record> = _.keyBy(keyByTest_map, 'id')
+var keyByTest_map2: KeyByTest$ByNumberMaybe<KeyByTest$Record> = _.keyBy('id', keyByTest_map)
+var keyByTest_map3: KeyByTest$ByNumberMaybe<KeyByTest$Record> = _.keyBy('id')(keyByTest_map)
 
 
 /**
@@ -148,8 +165,8 @@ function square(n) {
   return n * n;
 }
 
-_.map([4, 8], square);
-_.map({ 'a': 4, 'b': 8 }, square);
+_.map(square, [4, 8]);
+_.map(square, { 'a': 4, 'b': 8 });
 
 var users = [
   { 'user': 'barney' },
@@ -157,27 +174,28 @@ var users = [
 ];
 
 // The `_.property` iteratee shorthand.
-_.map(users, 'user');
+_.map('user', users);
 
 
 /**
  * _.pullAllBy
  */
-_.pullAllBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }], [{ 'x': 1 }, { 'x': 3 }], 'x');
+_.pullAllBy('x', [{ 'x': 1 }, { 'x': 3 }], [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }]);
+_.pullAllBy('x')([{ 'x': 1 }, { 'x': 3 }])([{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }]);
 
 
 /**
  * _.unionBy
  */
-_.unionBy([2.1], [1.2, 2.3], Math.floor);
-_.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+_.unionBy(Math.floor, [2.1], [1.2, 2.3]);
+_.unionBy('x', [{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }]);
 
 
 /**
  * _.uniqBy
  */
-_.uniqBy([2.1, 1.2, 2.3], Math.floor);
-_.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
+_.uniqBy(Math.floor, [2.1, 1.2, 2.3]);
+_.uniqBy('x', [{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }]);
 
 
 /**
@@ -194,12 +212,7 @@ _.clone({a: 1}).a == 'c';
  */
 _.isEqual('a', 'b');
 _.isEqual({x: 1}, {y: 2});
-
-// Flow considers this compatible with isEqual(a: any, b: any).
-// Reasonable people disagree about whether this should be considered a legal call.
-// See https://github.com/splodingsocks/FlowTyped/pull/1#issuecomment-149345275
-// and https://github.com/facebook/flow/issues/956
-_.isEqual(1);
+_.isEqual({x: 1})({y: 2});
 
 // $ExpectError function type expects no more than 2 arguments
 _.isEqual(1, 2, 3);
@@ -209,6 +222,7 @@ _.isEqual(1, 2, 3);
  * _.range
  */
 _.range(0, 10)[4] == 4
+_.range(0)(10)[4] == 4
 // $ExpectError string. This type is incompatible with number
 _.range(0, 'a');
 // $ExpectError string cannot be compared to number
@@ -218,32 +232,36 @@ _.range(0, 10)[4] == 'a';
 /**
  * _.sortedIndexBy
  */
-_.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, function(o) { return o.x; });
-_.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+_.sortedIndexBy(function(o) { return o.x; }, { 'x': 4 }, [{ 'x': 4 }, { 'x': 5 }]);
+_.sortedIndexBy('x', { 'x': 4 }, [{ 'x': 4 }, { 'x': 5 }]);
+_.sortedIndexBy('x')({ 'x': 4 }, [{ 'x': 4 }, { 'x': 5 }]);
 
 
 /**
  * _.sortedLastIndexBy
  */
-_.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, function(o) { return o.x; });
-_.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+_.sortedLastIndexBy(function(o) { return o.x; }, { 'x': 4 }, [{ 'x': 4 }, { 'x': 5 }]);
+_.sortedLastIndexBy('x', { 'x': 4 }, [{ 'x': 4 }, { 'x': 5 }]);
 
 /**
  * _.extend
  */
 _.extend({a: 1}, {b: 2}).a
+_.extend({a: 1})({b: 2}).a
 _.extend({a: 1}, {b: 2}).b
 // $ExpectError property `c`. Property not found in object literal
 _.extend({a: 1}, {b: 2}).c
 // $ExpectError property `c`. Poperty not found in object literal
 _.assignIn({a: 1}, {b: 2}).c
+// $ExpectError property `c`. Poperty not found in object literal
+_.assignIn({a: 1})({b: 2}).c
 
 
 /**
  * _.xorBy
  */
-_.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
-_.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+_.xorBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+_.xorBy('x', [{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }]);
 
 
 /**
@@ -285,9 +303,9 @@ boolTrue = _.isString(undefined);
 /**
  * _.find
  */
-_.find([1, 2, 3], x => x == 1);
+_.find(x => x == 1, [1, 2, 3]);
 // $ExpectError number. This type is incompatible with function type.
-_.find([1, 2, 3], 1);
+_.find(1, [1, 2, 3]);
 
 
 // Copy pasted tests from iflow-lodash
@@ -305,19 +323,25 @@ var directStrings : string[];
 var allNums : number[];
 var numsAndStrList : Array<number|string>;
 var mixedList : Array<mixed>;
-allNums = _.concat(nums, nums, nums);
-numsAndStrList = _.concat(nums, '123', '456');
+allNums = _.concat(nums, nums);
+numsAndStrList = _.concat(nums, '123');
+numsAndStrList = _.concat(nums)('123');
+numsAndStrList = _.concat(nums)(['123']);
 numsAndStrList = _.concat(nums, ['123', '456']);
-numsAndStrList = _.concat(nums, [[1,2,3], '456']);
+numsAndStrList = _.concat(nums, [1,2,3, '456']);
 mixedList = _.concat(nums, [[1,2,3], '456']);
+(_.concat(1, 2): number[]);
+(_.concat(1, [2]): number[]);
+(_.concat([1], [2]): number[]);
+(_.concat([1], 2): number[]);
 
 // Array#map, lodash.map, lodash#map
 nativeSquares = nums.map(function(num) {
   return num * num;
 });
-directSquares = _.map(nums, function(num) {
+directSquares = _.map(function(num) {
   return num * num;
-});
+}, nums);
 
 num = _.first(nums);
 
@@ -325,39 +349,40 @@ num = _.first(nums);
 nativeStrings = nums.map(function(num) {
   return JSON.stringify(num);
 });
-directStrings = _.map(nums, function(num) {
+directStrings = _.map(function(num) {
   return JSON.stringify(num);
-});
+}, nums);
 
 var obj = {a:1, b:2};
-bool = _.conformsTo(obj, {
+bool = _.conformsTo({
   a: function(x:number) {
     return true;
   },
-});
+}, obj);
 
-num = _.defaultTo(undefined, 2);
-string = _.defaultTo(undefined, 'str');
-bool = _.defaultTo(true, 'str');
-string = _.defaultTo('str', true);
+num = _.defaultTo(2, undefined);
+string = _.defaultTo('str', undefined);
+bool = _.defaultTo('str', true);
+string = _.defaultTo(true, 'str');
 
-num = _.tap(1, function(n) { return false; });
-bool = _.thru(1, function(n) { return false; });
+num = _.tap(function(n) { return false; }, 1);
+bool = _.thru(function(n) { return false; }, 1);
 
 var timesNums: number[];
 
-timesNums = _.times(5);
+timesNums = _.times((i: number) => i, 5);
+timesNums = _.times((i: number) => i)(5);
 // $ExpectError string. This type is incompatible with number
-var strings : string[] = _.times(5);
-timesNums = _.times(5, function(i: number) { return i + 1; });
+var strings : string[] = _.times((i) => i, 5);
+timesNums = _.times(function(i: number) { return i + 1; }, 5);
 // $ExpectError string. This type is incompatible with number
-timesNums = _.times(5, function(i: number) { return JSON.stringify(i); });
+timesNums = _.times(function(i: number) { return JSON.stringify(i); }, 5);
 
 // lodash.flatMap for collections and objects
 // this arrow function needs a type annotation due to a bug in flow
 // https://github.com/facebook/flow/issues/1948
-_.flatMap([1, 2, 3], (n): number[] => [n, n]);
-_.flatMap({a: 1, b: 2}, n => [n, n]);
+_.flatMap((n): number[] => [n, n], [1, 2, 3]);
+_.flatMap(n => [n, n], {a: 1, b: 2});
 
 /**
  * _.noop
@@ -369,3 +394,9 @@ _.noop('a', 2, [], null);
 (_.noop: (number, string) => void);
 // $ExpectError functions are contravariant in return types
 (_.noop: (string) => string);
+
+const ab = (a: number) => `${a}`;
+const bc = (b: string) => ({b});
+const cd = (c: {b: string}) => [c.b];
+const pipedResult: string[] = _.pipe(ab, bc, cd)(1);
+const composedResult: string[] = _.compose(cd, bc, ab)(1);
