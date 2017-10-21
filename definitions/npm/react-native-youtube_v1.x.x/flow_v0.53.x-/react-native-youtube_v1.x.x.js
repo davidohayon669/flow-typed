@@ -43,11 +43,14 @@ declare module "react-native-youtube" {
     showinfo?: boolean,
     modestbranding?: boolean,
     showFullscreenButton?: boolean,
+    resumePlayAndroid?: boolean,
     rel?: boolean,
     origin?: string,
     onError?: (e: NativeEvent & { error: string }) => mixed,
     onReady?: (e: NativeEvent) => mixed,
-    onChangeState?: (e: NativeEvent & { state: string }) => mixed,
+    onChangeState?: (
+      e: NativeEvent & { state: string, currentTime?: number }
+    ) => mixed,
     onChangeQuality?: (e: NativeEvent & { quality: string }) => mixed,
     onChangeFullscreen?: (e: NativeEvent & { isFullscreen: boolean }) => mixed,
     onProgress?: (

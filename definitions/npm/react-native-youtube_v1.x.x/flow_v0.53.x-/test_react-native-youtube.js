@@ -17,11 +17,12 @@ import YouTube, {
   showFullscreenButton
   rel
   showinfo
+  resumePlayAndroid
   controls={1}
   style={{ height: 300, width: 400 }}
   onError={(e: { error: string }) => {}}
   onReady={(e: { target: number }) => {}}
-  onChangeState={(e: { state: string }) => {}}
+  onChangeState={(e: { state: string, currentTime?: number }) => {}}
   onChangeQuality={(e: { quality: string }) => {}}
   onChangeFullscreen={(e: { isFullscreen: boolean }) => {}}
   onProgress={(e: { duration: number, currentTime: number }) => {}}
